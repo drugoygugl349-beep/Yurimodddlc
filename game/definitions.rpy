@@ -3,7 +3,7 @@ define persistent.steam = ("steamapps" in config.basedir.lower())
 define config.developer = False
 
 python early:
-    import singleton
+   # import singleton
     me = singleton.SingleInstance()
 
 init python:
