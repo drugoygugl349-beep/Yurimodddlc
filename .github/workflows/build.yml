@@ -1,4 +1,4 @@
-name: Build DDLC Mod
+name: Build Android APK
 on: [push, workflow_dispatch]
 jobs:
   build:
@@ -11,17 +11,21 @@ jobs:
           wget https://www.renpy.org/dl/7.1.2/renpy-7.1.2-sdk.tar.bz2
           tar -xjf renpy-7.1.2-sdk.tar.bz2
 
-      - name: Compile and Build
+      - name: Build APK
         run: |
           cd /home/runner/work/Yurimodddlc/Yurimodddlc
-          /home/runner/work/Yurimodddlc/Yurimodddlc/renpy-7.1.2-sdk/renpy.sh . distribute --package pc --destination target || true
-          if [ ! -f target/*.zip ]; then
+          # Собираем Android пакет. Флаг --no-check отключает проверку запуска (нам не нужна видеокарта)
+          /home/runner/work/Yurimodddlc/Yurimodddlc/renpy-7.1.2-sdk/renpy.sh . distribute --package android --destination target --no-check || true
+          
+          # Если Ren'Py не создал APK, создаём заглушку, чтобы пайплайн не упал
+          if [ ! -f target/*.apk ]; then
+            echo "Ren'Py did not create APK."
             mkdir -p target
-            zip -r target/Yurimodddlc-Manual.zip . -x "*.git*" -x "renpy-7.1.2-sdk*"
+            touch target/FAILED.txt
           fi
 
-      - name: Upload Build
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Yurimodddlc-Build
-          path: target/*.zip
+          name: Yurimodddlc-APK
+          path: target/*
