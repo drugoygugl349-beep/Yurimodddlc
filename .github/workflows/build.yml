@@ -13,15 +13,13 @@ jobs:
 
       - name: Build APK
         run: |
-          cd /home/runner/work/Yurimodddlc/Yurimodddlc
-          # Собираем Android пакет. Флаг --no-check отключает проверку запуска (нам не нужна видеокарта)
-          /home/runner/work/Yurimodddlc/Yurimodddlc/renpy-7.1.2-sdk/renpy.sh . distribute --package android --destination target --no-check || true
+          # Запускаем LAUNCHER, а не renpy.py напрямую
+          cd /home/runner/work/Yurimodddlc/Yurimodddlc/renpy-7.1.2-sdk
+          ./renpy.sh launcher distribute /home/runner/work/Yurimodddlc/Yurimodddlc --package android --destination /home/runner/work/Yurimodddlc/Yurimodddlc/target
           
-          # Если Ren'Py не создал APK, создаём заглушку, чтобы пайплайн не упал
-          if [ ! -f target/*.apk ]; then
-            echo "Ren'Py did not create APK."
-            mkdir -p target
-            touch target/FAILED.txt
+          # Если APK не создался, пишем FAILED
+          if [ ! -f /home/runner/work/Yurimodddlc/Yurimodddlc/target/*.apk ]; then
+            echo "Ren'Py did not create APK." > /home/runner/work/Yurimodddlc/Yurimodddlc/target/FAILED.txt
           fi
 
       - name: Upload APK
