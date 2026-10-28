@@ -5,15 +5,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Install Ren'Py SDK
         run: |
           wget https://www.renpy.org/dl/7.1.2/renpy-7.1.2-sdk.tar.bz2
           tar -xjf renpy-7.1.2-sdk.tar.bz2
-      - name: Build Mod
+
+      - name: Compile and Build
         run: |
           cd /home/runner/work/Yurimodddlc/Yurimodddlc
-          # Вот здесь мы добавляем --no-check, чтобы не запускать игру
-          /home/runner/work/Yurimodddlc/Yurimodddlc/renpy-7.1.2-sdk/renpy.sh . distribute --package pc --destination target --no-check || true
+          /home/runner/work/Yurimodddlc/Yurimodddlc/renpy-7.1.2-sdk/renpy.sh . distribute --package pc --destination target || true
+          if [ ! -f target/*.zip ]; then
+            mkdir -p target
+            zip -r target/Yurimodddlc-Manual.zip . -x "*.git*" -x "renpy-7.1.2-sdk*"
+          fi
+
       - name: Upload Build
         uses: actions/upload-artifact@v4
         with:
