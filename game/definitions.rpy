@@ -4,7 +4,7 @@ define config.developer = False
 
 python early:
    # import singleton
-    me = singleton.SingleInstance()
+#    me = singleton.SingleInstance()
 
 init python:
     config.keymap['game_menu'].remove('mouseup_3')
