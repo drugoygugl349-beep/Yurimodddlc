@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Windows EXE
 on: [push, workflow_dispatch]
 jobs:
   build:
@@ -11,19 +11,18 @@ jobs:
           wget https://www.renpy.org/dl/7.1.2/renpy-7.1.2-sdk.tar.bz2
           tar -xjf renpy-7.1.2-sdk.tar.bz2
 
-      - name: Build APK
+      - name: Build Windows
         run: |
-          # Запускаем LAUNCHER, а не renpy.py напрямую
           cd /home/runner/work/Yurimodddlc/Yurimodddlc/renpy-7.1.2-sdk
-          ./renpy.sh launcher distribute /home/runner/work/Yurimodddlc/Yurimodddlc --package android --destination /home/runner/work/Yurimodddlc/Yurimodddlc/target
+          # Запускаем сборку Windows через launcher
+          ./renpy.sh launcher distribute /home/runner/work/Yurimodddlc/Yurimodddlc --package win --destination /home/runner/work/Yurimodddlc/Yurimodddlc/target
           
-          # Если APK не создался, пишем FAILED
-          if [ ! -f /home/runner/work/Yurimodddlc/Yurimodddlc/target/*.apk ]; then
-            echo "Ren'Py did not create APK." > /home/runner/work/Yurimodddlc/Yurimodddlc/target/FAILED.txt
+          if [ ! -f /home/runner/work/Yurimodddlc/Yurimodddlc/target/*.zip ]; then
+            echo "Ren'Py did not create EXE." > /home/runner/work/Yurimodddlc/Yurimodddlc/target/FAILED.txt
           fi
 
-      - name: Upload APK
+      - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
-          name: Yurimodddlc-APK
+          name: Yurimodddlc-EXE
           path: target/*
